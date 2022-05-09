@@ -105,8 +105,16 @@ else:
             # Checker for when the message has been received properly
             Received = False
             Received2 = False
-            # Send the packet
-            clientSocket.send(encode(Message, 4))
+            try:
+                # Send the packet
+                clientSocket.send(encode(Message, 4))
+            except socket.error as e:
+                print(str(e))
+                # Let the client know that if the connection has not worked then there are too many connections
+                print("The server has shut down unexpectedly")
+                Received2 = True
+                Received = True
+                Quit = True
             while Received2 == False:
                 full_packet, sender_address = receive()
                 udp_header, data = unpack(full_packet)
